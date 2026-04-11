@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 function Orbs() {
   return (
@@ -170,40 +171,62 @@ export default function Home() {
       <Nav dark={dark} setDark={setDark} />
 
       {/* Hero */}
-      <section className="min-h-screen flex flex-col justify-center max-w-5xl mx-auto px-6 pt-16">
-        <p className={`font-[family-name:var(--font-dm-mono)] text-xs tracking-[0.3em] uppercase mb-6 ${dark ? "text-white/40" : "text-black/40"}`}>
-          Hello, world —
-        </p>
-        <h1 className="text-6xl md:text-8xl font-light leading-[1.05] tracking-tight">
-          Hi, I'm <GradientText>Olu</GradientText>
-          <br />
-          <span className={dark ? "text-white/90" : "text-black/90"}>Mabogunje.</span>
-        </h1>
-        <p className={`mt-8 text-xl md:text-2xl font-light leading-relaxed max-w-2xl ${dark ? "text-white/60" : "text-black/55"}`}>
-          A full-bodied hobbyist — engineer, data scientist, builder, traveller.
-          I make things that spark curiosity and share them here.
-        </p>
-        <div className="mt-12 flex gap-4 flex-wrap">
-          <a
-            href="#projects"
-            className="px-6 py-3 rounded-full text-sm font-[family-name:var(--font-dm-mono)] tracking-widest uppercase bg-gradient-to-r from-[#f97316] via-[#ec4899] to-[#8b5cf6] text-white hover:opacity-90 transition-opacity"
-          >
-            My work
-          </a>
-          <a
-            href="#about"
-            className={`px-6 py-3 rounded-full text-sm font-[family-name:var(--font-dm-mono)] tracking-widest uppercase border transition-colors ${
-              dark ? "border-white/20 text-white/70 hover:border-white/50" : "border-black/20 text-black/60 hover:border-black/50"
-            }`}
-          >
-            About me
-          </a>
-        </div>
-        <div className="mt-20 flex items-center gap-3">
-          <div className="h-px w-8 bg-gradient-to-r from-[#f97316] to-[#ec4899]" />
-          <span className={`font-[family-name:var(--font-dm-mono)] text-xs tracking-widest uppercase ${dark ? "text-white/30" : "text-black/30"}`}>
-            Scroll
-          </span>
+      <section className="min-h-screen flex items-center max-w-5xl mx-auto px-6 pt-16">
+        <div className="grid md:grid-cols-2 gap-16 w-full items-center">
+          {/* Left — text */}
+          <div className="flex flex-col">
+            <p className={`font-[family-name:var(--font-dm-mono)] text-xs tracking-[0.3em] uppercase mb-6 ${dark ? "text-white/40" : "text-black/40"}`}>
+              Hello, world —
+            </p>
+            <h1 className="text-6xl md:text-7xl font-light leading-[1.05] tracking-tight">
+              Hi, I'm <GradientText>Olu</GradientText>
+              <br />
+              <span className={dark ? "text-white/90" : "text-black/90"}>Mabogunje.</span>
+            </h1>
+            <p className={`mt-8 text-lg md:text-xl font-light leading-relaxed ${dark ? "text-white/60" : "text-black/55"}`}>
+              A full-bodied hobbyist — engineer, data scientist, builder, traveller.
+              I make things that spark curiosity and share them here.
+            </p>
+            <div className="mt-10 flex gap-4 flex-wrap">
+              <a
+                href="#projects"
+                className="px-6 py-3 rounded-full text-sm font-[family-name:var(--font-dm-mono)] tracking-widest uppercase bg-gradient-to-r from-[#f97316] via-[#ec4899] to-[#8b5cf6] text-white hover:opacity-90 transition-opacity"
+              >
+                My work
+              </a>
+              <a
+                href="#about"
+                className={`px-6 py-3 rounded-full text-sm font-[family-name:var(--font-dm-mono)] tracking-widest uppercase border transition-colors ${
+                  dark ? "border-white/20 text-white/70 hover:border-white/50" : "border-black/20 text-black/60 hover:border-black/50"
+                }`}
+              >
+                About me
+              </a>
+            </div>
+            <div className="mt-16 flex items-center gap-3">
+              <div className="h-px w-8 bg-gradient-to-r from-[#f97316] to-[#ec4899]" />
+              <span className={`font-[family-name:var(--font-dm-mono)] text-xs tracking-widest uppercase ${dark ? "text-white/30" : "text-black/30"}`}>
+                Scroll
+              </span>
+            </div>
+          </div>
+
+          {/* Right — photo */}
+          <div className="hidden md:flex justify-center items-center">
+            <div className="relative w-80 h-96">
+              {/* glow behind the photo */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#f97316] via-[#ec4899] to-[#8b5cf6] opacity-20 blur-2xl scale-110" />
+              <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/10">
+                <Image
+                  src="/images/profile.png"
+                  alt="Olu Mabogunje"
+                  fill
+                  className="object-cover object-top"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
