@@ -19,7 +19,7 @@ export default function Home() {
           Hi, I'm Olu! 👋
         </h1>
         <p className="mt-6 text-xl text-zinc-600 dark:text-zinc-400 max-w-xl leading-relaxed">
-          [I am a full bodied hobbyist who loves to build fun projects and learn new things. This is my personal website where I share my projects and thoughts. Feel free to explore and reach out if you want to connect!
+          I am a full bodied hobbyist who loves to build fun projects and learn new things. This is my personal website where I share my projects and thoughts. Feel free to explore and reach out if you want to connect!
         </p>
       </section>
 
@@ -54,7 +54,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="max-w-3xl mx-auto px-8 py-12 border-t border-zinc-100 dark:border-zinc-800">
-        <p className="text-sm text-zinc-400 dark:text-zinc-600">© 2026 [Your Name]</p>
+        <p className="text-sm text-zinc-400 dark:text-zinc-600">© 2026 Oluwagbemiga Mabogunje</p>
       </footer>
 
     </div>
