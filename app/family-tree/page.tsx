@@ -32,6 +32,7 @@ interface TreeNode {
   _children?: TreeNode[];
   isRoot?: boolean;
   isHighlighted?: boolean;
+  isLeaf?: boolean;
 }
 
 export default function FamilyTree() {
@@ -40,7 +41,8 @@ export default function FamilyTree() {
   const [relationships, setRelationships] = useState<Relationship[]>([]);
   const [rootId, setRootId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
-  const [mode, setMode] = useState<"tree" | "highlight">("tree");
+  const [mode, setMode] = useState<"tree" | "highlight" | "rleaf">("tree");
+  const [leafId, setLeafId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,6 +63,7 @@ export default function FamilyTree() {
       setPeople(data.people || []);
       setRelationships(data.relationships || []);
       if (data.highlightId) setHighlightId(data.highlightId);
+      if (data.rootId && !rootId) setRootId(data.rootId);
     } catch (e) {
       console.error("Failed to fetch family data", e);
     }
@@ -85,7 +88,7 @@ export default function FamilyTree() {
   useEffect(() => {
     if (!people.length || !relationships.length) return;
     renderTree();
-  }, [people, relationships, highlightId, mode]);
+  }, [people, relationships, highlightId, leafId, mode]);
 
   function buildHierarchy(rootPersonId: string): TreeNode | null {
     const personMap = new Map(people.map((p) => [p.id, p]));
@@ -124,6 +127,7 @@ export default function FamilyTree() {
         origin: person.origin,
         isRoot: personId === rootPersonId,
         isHighlighted: personId === highlightId,
+        isLeaf: personId === leafId,
         children: childNodes.length > 0 ? childNodes : undefined,
       };
     }
@@ -140,42 +144,46 @@ export default function FamilyTree() {
     const width = svgRef.current.clientWidth || 1000;
     const height = svgRef.current.clientHeight || 700;
 
-    // Find root — person with most children or selected root
-    const rootPersonId =
-      rootId ||
-      (() => {
-        const childCounts = new Map<string, number>();
-        for (const rel of relationships) {
-          if (rel.type === "parent_child") {
-            childCounts.set(
-              rel.person_a_id,
-              (childCounts.get(rel.person_a_id) || 0) + 1
-            );
-          }
-        }
-        let best = people[0]?.id;
-        let bestCount = 0;
-        for (const [id, count] of childCounts) {
-          if (count > bestCount) {
-            bestCount = count;
-            best = id;
-          }
-        }
-        return best;
-      })();
+    // Build parent map once — used by both root-finding strategies
+    const parentMap = new Map<string, string>();
+    for (const rel of relationships) {
+      if (rel.type === "parent_child") {
+        parentMap.set(rel.person_b_id, rel.person_a_id);
+      }
+    }
+
+    // Root always comes from the API (Igara by default).
+    // Re-leaf uses the same root — the d3 leafNode.ancestors() call below
+    // finds the correct path through the full hierarchy back to Igara.
+    const rootPersonId = rootId || people[0]?.id;
 
     const hierarchyData = buildHierarchy(rootPersonId);
     if (!hierarchyData) return;
 
     const root = d3.hierarchy(hierarchyData);
 
-    // Collapse all nodes beyond depth 2 initially
-    root.descendants().forEach((d: any) => {
-      if (d.depth >= 2 && d.children) {
-        d._children = d.children;
-        d.children = null;
-      }
-    });
+    // Collapse logic
+    if (mode === "rleaf" && leafId) {
+      // Find the path from root → leaf and only keep that branch expanded
+      const leafNode = root.descendants().find((d: any) => d.data.id === leafId);
+      const ancestorIds = new Set<string>(
+        leafNode ? leafNode.ancestors().map((d: any) => d.data.id) : []
+      );
+      root.descendants().forEach((d: any) => {
+        if (d.children && !ancestorIds.has(d.data.id)) {
+          d._children = d.children;
+          d.children = null;
+        }
+      });
+    } else {
+      // Default: collapse all nodes beyond depth 2
+      root.descendants().forEach((d: any) => {
+        if (d.depth >= 2 && d.children) {
+          d._children = d.children;
+          d.children = null;
+        }
+      });
+    }
 
     const treeLayout = d3.tree<TreeNode>().nodeSize([200, 140]);
 
@@ -271,6 +279,7 @@ export default function FamilyTree() {
         .attr("height", 64)
         .attr("rx", 10)
         .attr("fill", (d: any) => {
+          if (d.data.isLeaf) return "#065f46";
           if (d.data.isRoot) return "#18181b";
           if (d.data.isHighlighted) return "#7c3aed";
           if (mode === "highlight" && d.data.id === highlightId) return "#7c3aed";
@@ -279,11 +288,12 @@ export default function FamilyTree() {
           return "#27272a";
         })
         .attr("stroke", (d: any) => {
+          if (d.data.isLeaf) return "#34d399";
           if (d.data.isRoot || d.data.isHighlighted) return "#a78bfa";
           return "#3f3f46";
         })
         .attr("stroke-width", (d: any) =>
-          d.data.isRoot || d.data.isHighlighted ? 2 : 1
+          d.data.isLeaf || d.data.isRoot || d.data.isHighlighted ? 2 : 1
         );
 
       // Name text (truncated)
@@ -379,6 +389,8 @@ export default function FamilyTree() {
     setSelectedPerson(person);
     if (mode === "highlight") {
       setHighlightId(person.id);
+    } else if (mode === "rleaf") {
+      setLeafId(person.id);
     } else {
       setRootId(person.id);
     }
@@ -394,7 +406,7 @@ export default function FamilyTree() {
         >
           ← obam.ai
         </a>
-        <h1 className="text-lg font-bold text-zinc-50">Family Tree</h1>
+        <h1 className="text-lg font-bold text-zinc-50">Mabogunje Family Tree</h1>
         <span className="text-sm text-zinc-500">
           {people.length} people
         </span>
@@ -452,12 +464,22 @@ export default function FamilyTree() {
           >
             Highlight
           </button>
+          <button
+            onClick={() => setMode("rleaf")}
+            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+              mode === "rleaf"
+                ? "bg-emerald-600 text-white"
+                : "text-zinc-400 hover:text-zinc-100"
+            }`}
+          >
+            Re-leaf
+          </button>
         </div>
 
         {/* Reset */}
         {rootId && (
           <button
-            onClick={() => { setRootId(null); setHighlightId(null); }}
+            onClick={() => { setRootId(null); setHighlightId(null); setLeafId(null); }}
             className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
           >
             Reset view
@@ -478,12 +500,15 @@ export default function FamilyTree() {
           <span className="flex items-center gap-1">
             <span className="w-3 h-3 rounded bg-[#7c3aed] inline-block" /> Selected
           </span>
+          <span className="flex items-center gap-1">
+            <span className="w-3 h-3 rounded bg-[#065f46] inline-block" /> Leaf
+          </span>
         </div>
       </div>
 
       {/* Instructions */}
       <div className="px-8 py-2 text-xs text-zinc-600 border-b border-zinc-800">
-        Click any card to expand · Scroll to zoom · Drag to pan · Search a name to re-root or highlight
+        Click any card to expand · Scroll to zoom · Drag to pan · Re-leaf: search a name to trace their branch from the root
       </div>
 
       {/* Tree canvas */}

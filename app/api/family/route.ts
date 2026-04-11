@@ -55,7 +55,13 @@ export async function GET(request: NextRequest) {
 }
 
 function getRootPerson(db: any) {
-  // Default root: find the person with the most descendants
+  // Default root: Igara (oldest known ancestor)
+  const igara = db.prepare(
+    `SELECT id FROM persons WHERE full_name = 'Igara' LIMIT 1`
+  ).get();
+  if (igara) return igara.id;
+
+  // Fallback: person with most children
   const row = db.prepare(`
     SELECT person_a_id as id, COUNT(*) as cnt
     FROM relationships
