@@ -528,7 +528,7 @@ function FamilyChart() {
   }, []);
 
   return (
-    <div className="h-screen bg-[#0d0a0e] flex flex-col font-[family-name:var(--font-cormorant)] overflow-hidden">
+    <div className="h-[100dvh] bg-[#0d0a0e] flex flex-col font-[family-name:var(--font-cormorant)] overflow-hidden">
       {/* Header */}
       <header className="px-8 py-5 border-b border-white/5 flex items-center justify-between flex-shrink-0">
         <a href="/" className="text-sm font-[family-name:var(--font-dm-mono)] tracking-widest uppercase text-white/40 hover:text-white transition-colors">
@@ -575,7 +575,7 @@ function FamilyChart() {
       </div>
 
       {/* Tree canvas */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="flex-1 min-h-0 relative overflow-hidden">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center text-white/30 text-sm font-[family-name:var(--font-dm-mono)]">
             Loading family tree…
@@ -587,7 +587,7 @@ function FamilyChart() {
           ref={contRef}
           id="FamilyChart"
           className="f3 w-full h-full"
-          style={{ height: "100%", minHeight: "500px", color: "#fff" }}
+          style={{ height: "100%", color: "#fff" }}
         />
 
         {/* Detail panel */}
