@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import "family-chart/styles/family-chart.css"; // resolves to dist/styles/family-chart.css
+import "family-chart/styles/family-chart.css";
 
-const PASSWORD = "your-secret-here"; // change this
+const PASSWORD = "mabogs";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -69,6 +69,86 @@ function Gate({ onUnlock }: { onUnlock: () => void }) {
   );
 }
 
+// ── Edit helpers ──────────────────────────────────────────────────────────────
+
+function EditField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <p className="text-xs font-[family-name:var(--font-dm-mono)] tracking-widest uppercase text-white/30 mb-1">
+        {label}
+      </p>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full px-2 py-1.5 rounded text-sm text-white bg-white/5 border border-white/10 focus:outline-none focus:border-orange-400/50"
+      />
+    </div>
+  );
+}
+
+function EditSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: { v: string; l: string }[];
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <p className="text-xs font-[family-name:var(--font-dm-mono)] tracking-widest uppercase text-white/30 mb-1">
+        {label}
+      </p>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full px-2 py-1.5 rounded text-sm text-white bg-[#1a1a1f] border border-white/10 focus:outline-none focus:border-orange-400/50"
+      >
+        {options.map((o) => (
+          <option key={o.v} value={o.v}>
+            {o.l}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function EditTextarea({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <p className="text-xs font-[family-name:var(--font-dm-mono)] tracking-widest uppercase text-white/30 mb-1">
+        {label}
+      </p>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={3}
+        className="w-full px-2 py-1.5 rounded text-sm text-white bg-white/5 border border-white/10 focus:outline-none focus:border-orange-400/50 resize-none"
+      />
+    </div>
+  );
+}
+
 // ── Detail panel ──────────────────────────────────────────────────────────────
 
 function DetailPanel({
@@ -76,89 +156,201 @@ function DetailPanel({
   allData,
   onNavigate,
   onClose,
+  onSave,
 }: {
   datum: Datum | null;
   allData: Datum[];
   onNavigate: (id: string) => void;
   onClose: () => void;
+  onSave: (id: string, data: PersonData) => Promise<void>;
 }) {
+  const [editing, setEditing] = useState(false);
+  const [editData, setEditData] = useState<PersonData | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setEditing(false);
+    setEditData(null);
+  }, [datum?.id]);
+
   if (!datum) return null;
 
-  const d = datum.data;
   const byId = (id: string) => allData.find((p) => p.id === id);
+  const fullName = [datum.data["first name"], datum.data["last name"]]
+    .filter(Boolean)
+    .join(" ");
 
-  const fullName = [d["first name"], d["last name"]].filter(Boolean).join(" ");
+  const startEdit = () => {
+    setEditData({ ...datum.data });
+    setEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setEditing(false);
+    setEditData(null);
+  };
+
+  const save = async () => {
+    if (!editData) return;
+    setSaving(true);
+    await onSave(datum.id, editData);
+    setSaving(false);
+    setEditing(false);
+  };
+
+  const setField = <K extends keyof PersonData>(key: K, val: PersonData[K]) => {
+    setEditData((prev) => (prev ? { ...prev, [key]: val } : prev));
+  };
+
+  const d = datum.data;
 
   return (
     <div className="absolute top-0 right-0 h-full w-80 bg-[#0d0a0e]/95 border-l border-white/10 backdrop-blur-md z-20 flex flex-col overflow-y-auto">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
-        <h2 className="font-[family-name:var(--font-cormorant)] text-xl font-semibold text-white">
+        <h2 className="font-[family-name:var(--font-cormorant)] text-xl font-semibold text-white truncate mr-2">
           {fullName}
         </h2>
-        <button
-          onClick={onClose}
-          className="text-white/40 hover:text-white transition-colors text-xl leading-none"
-        >
-          ×
-        </button>
-      </div>
-
-      {/* Details */}
-      <div className="px-5 py-4 flex-1">
-        <div className="space-y-3">
-          {d.gender && (
-            <Row label="Gender" value={d.gender === "M" ? "Male" : "Female"} />
+        <div className="flex items-center gap-3 flex-shrink-0">
+          {editing ? (
+            <button
+              onClick={cancelEdit}
+              className="text-xs font-[family-name:var(--font-dm-mono)] tracking-widest uppercase text-white/40 hover:text-white transition-colors"
+            >
+              Cancel
+            </button>
+          ) : (
+            <button
+              onClick={startEdit}
+              className="text-xs font-[family-name:var(--font-dm-mono)] tracking-widest uppercase text-orange-400 hover:text-orange-300 transition-colors"
+            >
+              Edit
+            </button>
           )}
-          {d.birthday && <Row label="Born" value={d.birthday} />}
-          {d["death date"] && <Row label="Died" value={d["death date"]} />}
-          {d.origin && <Row label="Origin" value={d.origin} />}
-          {d.clan && <Row label="Clan" value={d.clan} />}
-          {d.notes && (
-            <div>
-              <p className="text-xs font-[family-name:var(--font-dm-mono)] tracking-widest uppercase text-white/30 mb-1">
-                Notes
-              </p>
-              <p className="text-sm text-white/60 leading-relaxed">{d.notes}</p>
-            </div>
-          )}
+          <button
+            onClick={onClose}
+            className="text-white/40 hover:text-white transition-colors text-xl leading-none"
+          >
+            ×
+          </button>
         </div>
+      </div>
 
-        {/* Relations */}
-        {datum.rels.parents.length > 0 && (
-          <RelSection
-            title="Parents"
-            ids={datum.rels.parents}
-            byId={byId}
-            onNavigate={onNavigate}
-          />
-        )}
-        {datum.rels.spouses.length > 0 && (
-          <RelSection
-            title="Spouses"
-            ids={datum.rels.spouses}
-            byId={byId}
-            onNavigate={onNavigate}
-          />
-        )}
-        {datum.rels.children.length > 0 && (
-          <RelSection
-            title="Children"
-            ids={datum.rels.children}
-            byId={byId}
-            onNavigate={onNavigate}
-          />
+      {/* Content */}
+      <div className="px-5 py-4 flex-1">
+        {editing && editData ? (
+          <div className="space-y-3">
+            <EditField
+              label="First Name"
+              value={editData["first name"] || ""}
+              onChange={(v) => setField("first name", v)}
+            />
+            <EditField
+              label="Last Name"
+              value={editData["last name"] || ""}
+              onChange={(v) => setField("last name", v)}
+            />
+            <EditSelect
+              label="Gender"
+              value={editData.gender || "M"}
+              options={[
+                { v: "M", l: "Male" },
+                { v: "F", l: "Female" },
+              ]}
+              onChange={(v) => setField("gender", v as "M" | "F")}
+            />
+            <EditField
+              label="Born (D/M/YYYY)"
+              value={editData.birthday || ""}
+              onChange={(v) => setField("birthday", v)}
+            />
+            <EditField
+              label="Died (D/M/YYYY)"
+              value={editData["death date"] || ""}
+              onChange={(v) => setField("death date", v)}
+            />
+            <EditField
+              label="Origin"
+              value={editData.origin || ""}
+              onChange={(v) => setField("origin", v)}
+            />
+            <EditField
+              label="Clan"
+              value={editData.clan || ""}
+              onChange={(v) => setField("clan", v)}
+            />
+            <EditTextarea
+              label="Notes"
+              value={editData.notes || ""}
+              onChange={(v) => setField("notes", v)}
+            />
+          </div>
+        ) : (
+          <>
+            <div className="space-y-3">
+              {d.gender && (
+                <Row label="Gender" value={d.gender === "M" ? "Male" : "Female"} />
+              )}
+              {d.birthday && <Row label="Born" value={d.birthday} />}
+              {d["death date"] && <Row label="Died" value={d["death date"]} />}
+              {d.origin && <Row label="Origin" value={d.origin} />}
+              {d.clan && <Row label="Clan" value={d.clan} />}
+              {d.notes && (
+                <div>
+                  <p className="text-xs font-[family-name:var(--font-dm-mono)] tracking-widest uppercase text-white/30 mb-1">
+                    Notes
+                  </p>
+                  <p className="text-sm text-white/60 leading-relaxed">{d.notes}</p>
+                </div>
+              )}
+            </div>
+
+            {datum.rels.parents.length > 0 && (
+              <RelSection
+                title="Parents"
+                ids={datum.rels.parents}
+                byId={byId}
+                onNavigate={onNavigate}
+              />
+            )}
+            {datum.rels.spouses.length > 0 && (
+              <RelSection
+                title="Spouses"
+                ids={datum.rels.spouses}
+                byId={byId}
+                onNavigate={onNavigate}
+              />
+            )}
+            {datum.rels.children.length > 0 && (
+              <RelSection
+                title="Children"
+                ids={datum.rels.children}
+                byId={byId}
+                onNavigate={onNavigate}
+              />
+            )}
+          </>
         )}
       </div>
 
-      {/* Make main button */}
+      {/* Footer */}
       <div className="px-5 py-4 border-t border-white/10">
-        <button
-          onClick={() => onNavigate(datum.id)}
-          className="w-full py-2 rounded-lg bg-gradient-to-r from-[#f97316] to-[#ec4899] text-white text-sm font-[family-name:var(--font-dm-mono)] tracking-widest uppercase hover:opacity-90 transition-opacity"
-        >
-          Set as main
-        </button>
+        {editing ? (
+          <button
+            onClick={save}
+            disabled={saving}
+            className="w-full py-2 rounded-lg bg-gradient-to-r from-[#f97316] to-[#ec4899] text-white text-sm font-[family-name:var(--font-dm-mono)] tracking-widest uppercase hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {saving ? "Saving…" : "Save Changes"}
+          </button>
+        ) : (
+          <button
+            onClick={() => onNavigate(datum.id)}
+            className="w-full py-2 rounded-lg bg-gradient-to-r from-[#f97316] to-[#ec4899] text-white text-sm font-[family-name:var(--font-dm-mono)] tracking-widest uppercase hover:opacity-90 transition-opacity"
+          >
+            Set as main
+          </button>
+        )}
       </div>
     </div>
   );
@@ -235,6 +427,17 @@ function FamilyChart() {
     [allData]
   );
 
+  // Save person data to DB and update local state
+  const handleSave = useCallback(async (id: string, data: PersonData) => {
+    await fetch(`/api/family-f3/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    setAllData((prev) => prev.map((d) => (d.id === id ? { ...d, data } : d)));
+    setSelected((prev) => (prev?.id === id ? { ...prev, data } : prev));
+  }, []);
+
   // Search filter
   useEffect(() => {
     if (!search.trim()) { setSearchResults([]); return; }
@@ -285,14 +488,13 @@ function FamilyChart() {
           const name = [firstName, lastName].filter(Boolean).join(" ");
           const birth = d.data.data.birthday ? `b. ${d.data.data.birthday}` : "";
           const gender = d.data.data.gender;
-          const bgColor =
-            gender === "M"
-              ? "rgba(30,58,95,0.9)"
-              : gender === "F"
-              ? "rgba(61,31,63,0.9)"
-              : "rgba(39,39,42,0.9)";
-          const borderColor =
-            gender === "M" ? "#3b82f6" : gender === "F" ? "#ec4899" : "#52525b";
+          const isSpouse = !!d.spouse;
+          const bgColor = gender === "M"
+            ? "rgba(30,58,95,0.9)"
+            : gender === "F"
+            ? "rgba(61,31,63,0.9)"
+            : "rgba(39,39,42,0.9)";
+          const borderColor = gender === "M" ? "#3b82f6" : gender === "F" ? "#ec4899" : "#52525b";
 
           return `
             <div style="
@@ -304,7 +506,9 @@ function FamilyChart() {
               padding:0 12px;
               box-sizing:border-box;
               cursor:pointer;
+              position:relative;
             ">
+              ${isSpouse ? `<div style="position:absolute;top:5px;right:8px;font-size:9px;font-weight:600;color:#f97316;letter-spacing:0.08em;text-transform:uppercase;">Spouse</div>` : ""}
               <div style="font-family:var(--font-cormorant,serif);font-size:13px;font-weight:600;color:#f4f4f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
               ${birth ? `<div style="font-size:10px;color:#a1a1aa;margin-top:3px;">${birth}</div>` : ""}
             </div>
@@ -324,7 +528,7 @@ function FamilyChart() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0d0a0e] flex flex-col font-[family-name:var(--font-cormorant)]">
+    <div className="h-screen bg-[#0d0a0e] flex flex-col font-[family-name:var(--font-cormorant)] overflow-hidden">
       {/* Header */}
       <header className="px-8 py-5 border-b border-white/5 flex items-center justify-between flex-shrink-0">
         <a href="/" className="text-sm font-[family-name:var(--font-dm-mono)] tracking-widest uppercase text-white/40 hover:text-white transition-colors">
@@ -378,12 +582,12 @@ function FamilyChart() {
           </div>
         )}
 
-        {/* family-chart mounts here */}
+        {/* family-chart mounts here — .f3 class required for library CSS scoping */}
         <div
           ref={contRef}
           id="FamilyChart"
-          className="w-full h-full"
-          style={{ minHeight: "calc(100vh - 120px)" }}
+          className="f3 w-full h-full"
+          style={{ height: "100%", minHeight: "500px", color: "#fff" }}
         />
 
         {/* Detail panel */}
@@ -392,6 +596,7 @@ function FamilyChart() {
           allData={allData}
           onNavigate={(id) => { navigateTo(id); }}
           onClose={() => setSelected(null)}
+          onSave={handleSave}
         />
       </div>
 
