@@ -31,7 +31,6 @@ interface TreeNode {
   children?: TreeNode[];
   _children?: TreeNode[];
   isRoot?: boolean;
-  isHighlighted?: boolean;
   isLeaf?: boolean;
 }
 
@@ -40,11 +39,11 @@ export default function FamilyTree() {
   const [people, setPeople] = useState<Person[]>([]);
   const [relationships, setRelationships] = useState<Relationship[]>([]);
   const [rootId, setRootId] = useState<string | null>(null);
-  const [highlightId, setHighlightId] = useState<string | null>(null);
-  const [mode, setMode] = useState<"tree" | "highlight" | "rleaf">("tree");
+  const [mode, setMode] = useState<"tree" | "highlight" | "full">("tree");
   const [leafId, setLeafId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<Person[]>([]);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const [loading, setLoading] = useState(true);
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
@@ -62,7 +61,6 @@ export default function FamilyTree() {
       const data = await res.json();
       setPeople(data.people || []);
       setRelationships(data.relationships || []);
-      if (data.highlightId) setHighlightId(data.highlightId);
       if (data.rootId && !rootId) setRootId(data.rootId);
     } catch (e) {
       console.error("Failed to fetch family data", e);
@@ -74,6 +72,7 @@ export default function FamilyTree() {
   useEffect(() => {
     if (!search.trim()) {
       setSearchResults([]);
+      setActiveIndex(-1);
       return;
     }
     const timer = setTimeout(async () => {
@@ -88,12 +87,11 @@ export default function FamilyTree() {
   useEffect(() => {
     if (!people.length || !relationships.length) return;
     renderTree();
-  }, [people, relationships, highlightId, leafId, mode]);
+  }, [people, relationships, leafId, mode]);
 
   function buildHierarchy(rootPersonId: string): TreeNode | null {
     const personMap = new Map(people.map((p) => [p.id, p]));
 
-    // Build parent->children map from parent_child relationships
     const childrenMap = new Map<string, string[]>();
     for (const rel of relationships) {
       if (rel.type === "parent_child") {
@@ -126,13 +124,109 @@ export default function FamilyTree() {
         gender: person.gender,
         origin: person.origin,
         isRoot: personId === rootPersonId,
-        isHighlighted: personId === highlightId,
         isLeaf: personId === leafId,
         children: childNodes.length > 0 ? childNodes : undefined,
       };
     }
 
     return buildNode(rootPersonId, 0);
+  }
+
+  function renderSpouses(
+    g: any,
+    nodes: any[],
+    nodeIds: Set<string>
+  ) {
+    const spouseMap = new Map<string, string[]>();
+    for (const rel of relationships) {
+      if (rel.type === "spouse") {
+        if (!spouseMap.has(rel.person_a_id)) spouseMap.set(rel.person_a_id, []);
+        if (!spouseMap.has(rel.person_b_id)) spouseMap.set(rel.person_b_id, []);
+        spouseMap.get(rel.person_a_id)!.push(rel.person_b_id);
+        spouseMap.get(rel.person_b_id)!.push(rel.person_a_id);
+      }
+    }
+
+    const personMap = new Map(people.map((p) => [p.id, p]));
+
+    type SpouseEntry = { node: any; spouse: Person };
+    const spouseEntries: SpouseEntry[] = [];
+    for (const d of nodes) {
+      if (!nodeIds.has((d as any).data.id)) continue;
+      const spouseIds = spouseMap.get((d as any).data.id) || [];
+      for (const sid of spouseIds) {
+        const sp = personMap.get(sid);
+        if (sp) spouseEntries.push({ node: d, spouse: sp });
+      }
+    }
+
+    g.selectAll(".spouse-group").remove();
+    g.selectAll(".spouse-link").remove();
+
+    for (const { node: d, spouse } of spouseEntries) {
+      const sx = (d as any).x + 200;
+      const sy = (d as any).y;
+
+      g.append("line")
+        .attr("class", "spouse-link")
+        .attr("x1", (d as any).x + 90)
+        .attr("y1", sy)
+        .attr("x2", sx - 90)
+        .attr("y2", sy)
+        .attr("stroke", "#a78bfa")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", "4,3");
+
+      const sg = g.append("g")
+        .attr("class", "spouse-group")
+        .attr("transform", `translate(${sx}, ${sy})`);
+
+      sg.append("rect")
+        .attr("x", -85).attr("y", -32)
+        .attr("width", 170).attr("height", 64)
+        .attr("rx", 10)
+        .attr("fill", "#7c2d12")
+        .attr("stroke", "#fb923c")
+        .attr("stroke-width", 1.5);
+
+      sg.append("text")
+        .attr("text-anchor", "middle")
+        .attr("y", -18)
+        .attr("font-size", "9px")
+        .attr("fill", "#fb923c")
+        .attr("font-family", "sans-serif")
+        .text("spouse");
+
+      const parts = spouse.full_name.split(" ");
+      const line1 = parts.slice(0, 2).join(" ");
+      const line2 = parts.slice(2).join(" ");
+      const nameEl = sg.append("text")
+        .attr("text-anchor", "middle")
+        .attr("y", -8)
+        .attr("font-size", "11px")
+        .attr("font-weight", "600")
+        .attr("fill", "#f4f4f5")
+        .attr("font-family", "sans-serif");
+      nameEl.append("tspan").attr("x", 0).attr("dy", "0")
+        .text(line1.length > 18 ? line1.slice(0, 17) + "…" : line1);
+      if (line2) {
+        nameEl.append("tspan").attr("x", 0).attr("dy", "13px")
+          .text(line2.length > 18 ? line2.slice(0, 17) + "…" : line2);
+      }
+
+      sg.append("text")
+        .attr("text-anchor", "middle")
+        .attr("y", 20)
+        .attr("font-size", "10px")
+        .attr("fill", "#a1a1aa")
+        .attr("font-family", "sans-serif")
+        .text(() => {
+          if (spouse.birth_year && spouse.death_year)
+            return `${spouse.birth_year} – ${spouse.death_year}`;
+          if (spouse.birth_year) return `b. ${spouse.birth_year}`;
+          return "";
+        });
+    }
   }
 
   function renderTree() {
@@ -142,19 +236,7 @@ export default function FamilyTree() {
     svg.selectAll("*").remove();
 
     const width = svgRef.current.clientWidth || 1000;
-    const height = svgRef.current.clientHeight || 700;
 
-    // Build parent map once — used by both root-finding strategies
-    const parentMap = new Map<string, string>();
-    for (const rel of relationships) {
-      if (rel.type === "parent_child") {
-        parentMap.set(rel.person_b_id, rel.person_a_id);
-      }
-    }
-
-    // Root always comes from the API (Igara by default).
-    // Re-leaf uses the same root — the d3 leafNode.ancestors() call below
-    // finds the correct path through the full hierarchy back to Igara.
     const rootPersonId = rootId || people[0]?.id;
 
     const hierarchyData = buildHierarchy(rootPersonId);
@@ -163,8 +245,7 @@ export default function FamilyTree() {
     const root = d3.hierarchy(hierarchyData);
 
     // Collapse logic
-    if (mode === "rleaf" && leafId) {
-      // Find the path from root → leaf and only keep that branch expanded
+    if (mode === "highlight" && leafId) {
       const leafNode = root.descendants().find((d: any) => d.data.id === leafId);
       const ancestorIds = new Set<string>(
         leafNode ? leafNode.ancestors().map((d: any) => d.data.id) : []
@@ -175,8 +256,10 @@ export default function FamilyTree() {
           d.children = null;
         }
       });
+    } else if (mode === "full") {
+      // No collapse — show everything
     } else {
-      // Default: collapse all nodes beyond depth 2
+      // Default: collapse beyond depth 2
       root.descendants().forEach((d: any) => {
         if (d.depth >= 2 && d.children) {
           d._children = d.children;
@@ -187,7 +270,6 @@ export default function FamilyTree() {
 
     const treeLayout = d3.tree<TreeNode>().nodeSize([200, 140]);
 
-    // Zoom container
     const g = svg.append("g");
 
     const zoom = d3
@@ -199,7 +281,6 @@ export default function FamilyTree() {
 
     svg.call(zoom);
 
-    // Center initially
     svg.call(
       zoom.transform,
       d3.zoomIdentity.translate(width / 2, 80).scale(0.75)
@@ -268,6 +349,11 @@ export default function FamilyTree() {
             d._children = null;
           }
           update(d);
+        })
+        .on("dblclick", (_: any, d: any) => {
+          if (mode === "highlight") {
+            setLeafId(d.data.id);
+          }
         });
 
       // Card background
@@ -281,22 +367,20 @@ export default function FamilyTree() {
         .attr("fill", (d: any) => {
           if (d.data.isLeaf) return "#065f46";
           if (d.data.isRoot) return "#18181b";
-          if (d.data.isHighlighted) return "#7c3aed";
-          if (mode === "highlight" && d.data.id === highlightId) return "#7c3aed";
           if (d.data.gender === "M") return "#1e3a5f";
           if (d.data.gender === "F") return "#3d1f3f";
           return "#27272a";
         })
         .attr("stroke", (d: any) => {
           if (d.data.isLeaf) return "#34d399";
-          if (d.data.isRoot || d.data.isHighlighted) return "#a78bfa";
+          if (d.data.isRoot) return "#a78bfa";
           return "#3f3f46";
         })
         .attr("stroke-width", (d: any) =>
-          d.data.isLeaf || d.data.isRoot || d.data.isHighlighted ? 2 : 1
+          d.data.isLeaf || d.data.isRoot ? 2 : 1
         );
 
-      // Name text (truncated)
+      // Name text
       nodeEnter
         .append("text")
         .attr("text-anchor", "middle")
@@ -358,7 +442,6 @@ export default function FamilyTree() {
         .attr("font-family", "sans-serif")
         .text((d: any) => (d.children ? "−" : "+"));
 
-      // Merge and transition
       const nodeMerge = node.merge(nodeEnter);
 
       nodeMerge
@@ -366,12 +449,26 @@ export default function FamilyTree() {
         .duration(400)
         .attr("transform", (d: any) => `translate(${d.x}, ${d.y})`);
 
-      // Update +/- indicator after toggle
       nodeMerge.select("text:last-of-type").text((d: any) =>
         d.children ? "−" : "+"
       );
 
       node.exit().remove();
+
+      // Spouse rendering
+      if (mode === "highlight" && leafId) {
+        const leafNode = nodes.find((d: any) => d.data.id === leafId);
+        const ancestorIds = new Set<string>(
+          leafNode ? leafNode.ancestors().map((d: any) => d.data.id) : []
+        );
+        renderSpouses(g, nodes, ancestorIds);
+      } else if (mode === "full") {
+        const allIds = new Set<string>(nodes.map((d: any) => d.data.id));
+        renderSpouses(g, nodes, allIds);
+      } else {
+        g.selectAll(".spouse-group").remove();
+        g.selectAll(".spouse-link").remove();
+      }
 
       // Store positions for transitions
       nodes.forEach((d: any) => {
@@ -388,8 +485,6 @@ export default function FamilyTree() {
     setSearchResults([]);
     setSelectedPerson(person);
     if (mode === "highlight") {
-      setHighlightId(person.id);
-    } else if (mode === "rleaf") {
       setLeafId(person.id);
     } else {
       setRootId(person.id);
@@ -420,16 +515,35 @@ export default function FamilyTree() {
             type="text"
             placeholder="Search by name…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setActiveIndex(-1); }}
+            onKeyDown={(e) => {
+              if (!searchResults.length) return;
+              if (e.key === "ArrowDown") {
+                e.preventDefault();
+                setActiveIndex((i) => Math.min(i + 1, searchResults.length - 1));
+              } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                setActiveIndex((i) => Math.max(i - 1, 0));
+              } else if (e.key === "Enter" && activeIndex >= 0) {
+                e.preventDefault();
+                selectPerson(searchResults[activeIndex]);
+              } else if (e.key === "Escape") {
+                setSearch("");
+                setSearchResults([]);
+                setActiveIndex(-1);
+              }
+            }}
             className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-violet-500"
           />
           {searchResults.length > 0 && (
             <div className="absolute top-full mt-1 left-0 right-0 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl z-10 max-h-64 overflow-y-auto">
-              {searchResults.map((p) => (
+              {searchResults.map((p, i) => (
                 <button
                   key={p.id}
                   onClick={() => selectPerson(p)}
-                  className="w-full text-left px-4 py-2 hover:bg-zinc-800 text-sm text-zinc-100 border-b border-zinc-800 last:border-0"
+                  className={`w-full text-left px-4 py-2 text-sm text-zinc-100 border-b border-zinc-800 last:border-0 ${
+                    i === activeIndex ? "bg-zinc-700" : "hover:bg-zinc-800"
+                  }`}
                 >
                   <div className="font-medium">{p.full_name}</div>
                   <div className="text-zinc-500 text-xs">
@@ -458,28 +572,28 @@ export default function FamilyTree() {
             onClick={() => setMode("highlight")}
             className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
               mode === "highlight"
-                ? "bg-violet-600 text-white"
+                ? "bg-emerald-600 text-white"
                 : "text-zinc-400 hover:text-zinc-100"
             }`}
           >
             Highlight
           </button>
           <button
-            onClick={() => setMode("rleaf")}
+            onClick={() => setMode("full")}
             className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              mode === "rleaf"
-                ? "bg-emerald-600 text-white"
+              mode === "full"
+                ? "bg-orange-600 text-white"
                 : "text-zinc-400 hover:text-zinc-100"
             }`}
           >
-            Re-leaf
+            Full
           </button>
         </div>
 
         {/* Reset */}
-        {rootId && (
+        {(rootId || leafId) && (
           <button
-            onClick={() => { setRootId(null); setHighlightId(null); setLeafId(null); }}
+            onClick={() => { setRootId(null); setLeafId(null); }}
             className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
           >
             Reset view
@@ -498,17 +612,17 @@ export default function FamilyTree() {
             <span className="w-3 h-3 rounded bg-[#18181b] inline-block" /> Root
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded bg-[#7c3aed] inline-block" /> Selected
+            <span className="w-3 h-3 rounded bg-[#065f46] inline-block" /> Leaf
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded bg-[#065f46] inline-block" /> Leaf
+            <span className="w-3 h-3 rounded bg-[#7c2d12] inline-block" /> Spouse
           </span>
         </div>
       </div>
 
       {/* Instructions */}
       <div className="px-8 py-2 text-xs text-zinc-600 border-b border-zinc-800">
-        Click any card to expand · Scroll to zoom · Drag to pan · Re-leaf: search a name to trace their branch from the root
+        Click to expand · Double-click in Highlight mode to set leaf · Scroll to zoom · Drag to pan
       </div>
 
       {/* Tree canvas */}
