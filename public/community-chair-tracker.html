@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haughville Hotties — Community Resources</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:           #1a1410;
+    --bg2:          #211a13;
+    --bg3:          #2a2018;
+    --card:         #2e2318;
+    --card2:        #352a1e;
+    --amber:        #d4873a;
+    --amber-light:  #e8a455;
+    --amber-dim:    #a06228;
+    --gold:         #c9a84c;
+    --cream:        #f0e6d3;
+    --cream-dim:    #b8a98e;
+    --red:          #c0392b;
+    --green:        #5a8a5e;
+    --border:       rgba(212,135,58,0.18);
+    --border-strong:rgba(212,135,58,0.38);
+    --shadow:       0 8px 40px rgba(0,0,0,0.6);
+  }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--cream); min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+  .page { display:none; min-height:100vh; }
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.2rem 2.5rem;
+    background:rgba(26,20,16,0.96); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-logo { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; letter-spacing:0.03em; color:var(--amber); cursor:pointer; }
+  .nav-links { display:flex; gap:0.4rem; align-items:center; }
+  .nav-btn { background:none; border:1px solid transparent; color:var(--cream-dim); font-family:'DM Sans',sans-serif; font-size:0.8rem; letter-spacing:0.07em; text-transform:uppercase; padding:0.45rem 1rem; border-radius:2px; cursor:pointer; transition:all 0.2s; }
+  .nav-btn:hover { color:var(--amber); border-color:var(--border); }
+  .nav-btn.active-nav { color:var(--amber); border-color:var(--border-strong); }
+  .nav-btn.cta { background:var(--amber); color:var(--bg); border-color:var(--amber); font-weight:500; }
+  .nav-btn.cta:hover { background:var(--amber-light); }
+  /* HERO */
+  #page-home { position:relative; }
+  .hero { position:relative; height:100vh; overflow:hidden; display:flex; align-items:flex-end; }
+  .hero-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:brightness(0.38) saturate(0.7); }
+  .hero-placeholder { position:absolute; inset:0; background:linear-gradient(135deg,#3d2510 0%,#1a1008 40%,#2a1606 100%); }
+  .hero-grain { position:absolute; inset:0; opacity:0.05; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .hero-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(26,20,16,1) 0%,rgba(26,20,16,0.4) 45%,transparent 100%); }
+  .hero-content { position:relative; z-index:2; padding:0 3rem 5rem; max-width:860px; animation:fadeUp 1s cubic-bezier(0.16,1,0.3,1) both; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+  .hero-eyebrow { font-size:0.7rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--amber); margin-bottom:1rem; animation:fadeUp 1s 0.1s both; }
+  .hero-title { font-family:'Playfair Display',serif; font-size:clamp(3.2rem,7.5vw,6.5rem); font-weight:900; line-height:1.02; color:var(--cream); margin-bottom:1.1rem; animation:fadeUp 1s 0.2s both; }
+  .hero-title em { font-style:italic; color:var(--amber); }
+  .hero-sub { font-size:0.98rem; color:var(--cream-dim); margin-bottom:2.4rem; max-width:480px; line-height:1.65; animation:fadeUp 1s 0.3s both; }
+  .hero-actions { display:flex; gap:1rem; animation:fadeUp 1s 0.42s both; }
+  .btn-primary { background:var(--amber); color:var(--bg); font-family:'DM Sans',sans-serif; font-weight:500; font-size:0.82rem; letter-spacing:0.09em; text-transform:uppercase; padding:0.82rem 1.9rem; border:none; border-radius:2px; cursor:pointer; transition:background 0.2s; }
+  .btn-primary:hover { background:var(--amber-light); }
+  .btn-outline { background:transparent; color:var(--cream-dim); font-family:'DM Sans',sans-serif; font-size:0.82rem; letter-spacing:0.09em; text-transform:uppercase; padding:0.82rem 1.9rem; border:1px solid rgba(240,230,211,0.25); border-radius:2px; cursor:pointer; transition:all 0.2s; }
+  .btn-outline:hover { color:var(--amber); border-color:var(--border-strong); }
+  /* SECTIONS */
+  .section-wrap { max-width:1100px; margin:0 auto; padding:5rem 2.5rem; border-top:1px solid var(--border); }
+  .section-eyebrow { font-size:0.68rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--amber-dim); margin-bottom:0.5rem; display:flex; align-items:center; gap:0.8rem; }
+  .section-eyebrow::after { content:''; flex:1; max-width:36px; height:1px; background:var(--amber-dim); }
+  .section-title { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--cream); margin-bottom:2.5rem; }
+  /* STAT GRID */
+  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:2.5rem; }
+  .stat-card { background:var(--card); padding:1.7rem 1.4rem; position:relative; }
+  .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(to right,var(--amber),transparent); }
+  .stat-label { font-size:0.66rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:0.5rem; }
+  .stat-num { font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:900; color:var(--amber); line-height:1; }
+  .stat-sub { font-size:0.74rem; color:var(--cream-dim); margin-top:0.3rem; }
+  /* HOLDERS */
+  .holders-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:1rem; }
+  .holder-card { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:1.4rem; transition:border-color 0.2s; }
+  .holder-card:hover { border-color:var(--amber-dim); }
+  .holder-name { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--cream); margin-bottom:0.55rem; }
+  .holder-items { display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .holder-tag { font-size:0.72rem; letter-spacing:0.06em; padding:0.22rem 0.65rem; border-radius:20px; border:1px solid var(--border-strong); color:var(--amber-light); }
+  .holder-date { font-size:0.72rem; color:var(--cream-dim); }
+  .empty-state { grid-column:1/-1; text-align:center; padding:3rem; color:var(--cream-dim); font-style:italic; font-size:0.88rem; border:1px dashed var(--border); border-radius:4px; }
+  /* REQUEST PAGE */
+  #page-request { padding-top:80px; }
+  .page-inner { max-width:640px; margin:0 auto; padding:4rem 2rem; }
+  .page-header { margin-bottom:2.5rem; }
+  .form-card { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:2.5rem; position:relative; overflow:hidden; }
+  .form-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(to right,var(--amber),var(--gold),transparent); }
+  .form-row { margin-bottom:1.4rem; }
+  .form-label { display:block; font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--amber); margin-bottom:0.5rem; }
+  .form-input { width:100%; background:var(--bg2); border:1px solid var(--border); border-radius:3px; color:var(--cream); font-family:'DM Sans',sans-serif; font-size:0.92rem; padding:0.74rem 1rem; outline:none; transition:border-color 0.2s; }
+  .form-input:focus { border-color:var(--amber-dim); }
+  .form-input::placeholder { color:rgba(184,169,142,0.38); }
+  .form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .form-note { font-size:0.78rem; color:var(--cream-dim); margin-top:0.5rem; line-height:1.5; padding:0.65rem 0.9rem; background:rgba(212,135,58,0.06); border-left:2px solid var(--amber-dim); border-radius:0 2px 2px 0; }
+  .submit-btn { width:100%; padding:0.9rem; background:var(--amber); color:var(--bg); font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; border:none; border-radius:2px; cursor:pointer; transition:background 0.2s; margin-top:0.5rem; }
+  .submit-btn:hover { background:var(--amber-light); }
+  .success-banner { display:none; margin-top:1rem; padding:0.9rem 1.1rem; background:rgba(90,138,94,0.12); border:1px solid rgba(90,138,94,0.35); border-radius:3px; color:#8dc991; font-size:0.84rem; text-align:center; }
+  /* ADMIN LOGIN */
+  #page-admin-login { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  .login-card { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:3rem 2.5rem; width:100%; max-width:380px; text-align:center; position:relative; overflow:hidden; }
+  .login-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(to right,transparent,var(--amber),transparent); }
+  .lock-icon { font-size:2rem; margin-bottom:1rem; opacity:0.6; }
+  .login-title { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; margin-bottom:0.3rem; }
+  .login-sub { font-size:0.82rem; color:var(--cream-dim); margin-bottom:2rem; }
+  .login-error { display:none; font-size:0.8rem; color:#e07070; margin-top:0.8rem; }
+  /* ADMIN */
+  #page-admin { padding-top:80px; }
+  .admin-wrap { max-width:1160px; margin:0 auto; padding:3rem 2rem; }
+  .admin-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
+  .admin-greeting { font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:0.4rem; }
+  .admin-badge { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; background:rgba(212,135,58,0.1); border:1px solid var(--border-strong); color:var(--amber); padding:0.28rem 0.75rem; border-radius:20px; }
+  .admin-nav-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:2.5rem; }
+  .admin-nav-card { background:var(--card); padding:2rem 1.8rem; cursor:pointer; transition:background 0.2s; position:relative; }
+  .admin-nav-card:hover { background:var(--card2); }
+  .admin-nav-card::after { content:'→'; position:absolute; bottom:1.2rem; right:1.4rem; color:var(--amber); font-size:1.1rem; opacity:0; transition:opacity 0.2s,transform 0.2s; }
+  .admin-nav-card:hover::after { opacity:1; transform:translateX(3px); }
+  .anc-icon { font-size:1.5rem; margin-bottom:0.9rem; opacity:0.7; }
+  .anc-title { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:var(--cream); margin-bottom:0.35rem; }
+  .anc-desc { font-size:0.78rem; color:var(--cream-dim); line-height:1.5; }
+  .anc-count { display:inline-block; margin-top:0.9rem; font-size:0.68rem; letter-spacing:0.1em; background:rgba(212,135,58,0.1); color:var(--amber); padding:0.2rem 0.65rem; border-radius:20px; }
+  /* SUB PAGES */
+  .sub-page { display:none; }
+  .sub-header { display:flex; align-items:center; gap:1rem; margin-bottom:2rem; padding-bottom:2rem; border-bottom:1px solid var(--border); }
+  .back-btn { background:none; border:1px solid var(--border); color:var(--cream-dim); font-family:'DM Sans',sans-serif; font-size:0.78rem; padding:0.4rem 1rem; border-radius:2px; cursor:pointer; transition:all 0.2s; }
+  .back-btn:hover { border-color:var(--amber); color:var(--amber); }
+  /* REQUESTS */
+  .requests-list { display:flex; flex-direction:column; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+  .req-card { background:var(--card); padding:1.4rem 1.6rem; display:grid; grid-template-columns:1fr auto; gap:1rem; align-items:center; transition:background 0.15s; }
+  .req-card:hover { background:var(--card2); }
+  .req-card.accepted { border-left:3px solid var(--green); }
+  .req-card.declined { border-left:3px solid rgba(192,57,43,0.5); opacity:0.55; }
+  .req-card.pending  { border-left:3px solid var(--amber); }
+  .req-name { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; margin-bottom:0.32rem; }
+  .req-meta { font-size:0.78rem; color:var(--cream-dim); display:flex; gap:1.1rem; flex-wrap:wrap; align-items:center; }
+  .req-actions { display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:flex-end; align-items:center; }
+  .req-status-badge { font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.2rem 0.65rem; border-radius:20px; }
+  .badge-pending  { background:rgba(212,135,58,0.12); color:var(--amber); }
+  .badge-accepted { background:rgba(90,138,94,0.12); color:#8dc991; }
+  .badge-declined { background:rgba(192,57,43,0.1); color:#e07070; }
+  .req-type-tag { font-size:0.68rem; padding:0.2rem 0.6rem; border-radius:20px; border:1px solid var(--border-strong); color:var(--amber-light); }
+  .action-btn { font-family:'DM Sans',sans-serif; font-size:0.72rem; letter-spacing:0.07em; text-transform:uppercase; padding:0.38rem 0.9rem; border-radius:2px; cursor:pointer; transition:all 0.2s; border:1px solid; }
+  .btn-accept { background:rgba(90,138,94,0.1); border-color:rgba(90,138,94,0.35); color:#8dc991; }
+  .btn-accept:hover { background:rgba(90,138,94,0.22); }
+  .btn-decline { background:transparent; border-color:rgba(192,57,43,0.3); color:#e07070; }
+  .btn-decline:hover { background:rgba(192,57,43,0.1); }
+  /* MODALS */
+  .modal-overlay { display:none; position:fixed; inset:0; z-index:200; background:rgba(10,7,4,0.88); backdrop-filter:blur(6px); align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--card2); border:1px solid var(--border-strong); border-radius:6px; padding:2rem; max-width:440px; width:90%; }
+  .modal-title { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; margin-bottom:0.3rem; }
+  .modal-sub { font-size:0.8rem; color:var(--cream-dim); margin-bottom:1.4rem; line-height:1.55; }
+  .modal-options { display:flex; gap:0.8rem; margin-bottom:1.4rem; }
+  .modal-opt { flex:1; padding:1rem; text-align:center; background:var(--bg2); border:2px solid var(--border); border-radius:4px; cursor:pointer; transition:all 0.2s; font-size:0.82rem; }
+  .modal-opt:hover { border-color:var(--border-strong); }
+  .modal-opt.selected { border-color:var(--amber); background:rgba(212,135,58,0.08); }
+  .modal-opt-icon { font-size:1.4rem; margin-bottom:0.4rem; }
+  .warn-box { background:rgba(212,135,58,0.07); border:1px solid rgba(212,135,58,0.28); border-radius:3px; padding:0.75rem 1rem; font-size:0.78rem; color:var(--amber-light); margin-bottom:1.1rem; display:none; line-height:1.5; }
+  .modal-btns { display:flex; gap:0.6rem; justify-content:flex-end; }
+  .modal-cancel { background:none; border:1px solid var(--border); color:var(--cream-dim); font-family:'DM Sans',sans-serif; font-size:0.78rem; padding:0.5rem 1.2rem; border-radius:2px; cursor:pointer; transition:all 0.15s; }
+  .modal-cancel:hover { border-color:var(--border-strong); color:var(--cream); }
+  .modal-confirm { background:var(--amber); border:none; color:var(--bg); font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:500; padding:0.5rem 1.5rem; border-radius:2px; cursor:pointer; transition:background 0.2s; }
+  .modal-confirm:hover { background:var(--amber-light); }
+  .modal-input { width:100%; background:var(--bg2); border:1px solid var(--border); border-radius:3px; color:var(--cream); font-family:'DM Sans',sans-serif; font-size:0.9rem; padding:0.7rem 0.9rem; margin:0.8rem 0; outline:none; transition:border-color 0.2s; }
+  .modal-input:focus { border-color:var(--amber-dim); }
+  .modal-info { font-size:0.78rem; color:var(--cream-dim); line-height:1.5; padding:0.65rem 0.9rem; background:rgba(212,135,58,0.06); border-left:2px solid var(--amber-dim); border-radius:0 2px 2px 0; margin-bottom:1rem; }
+  .modal-label { font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--amber); }
+  /* EDIT FIELDS */
+  .edit-fields { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin:0.8rem 0 1rem; }
+  .edit-field label { display:block; font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--amber); margin-bottom:0.35rem; }
+  .edit-field input { width:100%; background:var(--bg2); border:1px solid var(--border); border-radius:3px; color:var(--cream); font-family:'DM Sans',sans-serif; font-size:0.88rem; padding:0.55rem 0.8rem; outline:none; transition:border-color 0.2s; }
+  .edit-field input:focus { border-color:var(--amber-dim); }
+  /* INVENTORY TABLE */
+  .table-wrap { background:var(--card); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:2rem; overflow-x:auto; }
+  .inv-table, .fin-table { width:100%; border-collapse:collapse; }
+  .inv-table th, .fin-table th { text-align:left; font-size:0.64rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--amber); padding:0.85rem 1.1rem; border-bottom:1px solid var(--border-strong); white-space:nowrap; }
+  .inv-table td, .fin-table td { padding:1rem 1.1rem; border-bottom:1px solid var(--border); font-size:0.86rem; color:var(--cream); vertical-align:middle; }
+  .inv-table tr:last-child td, .fin-table tr:last-child td { border-bottom:none; }
+  .inv-table tr:hover td, .fin-table tr:hover td { background:rgba(212,135,58,0.03); }
+  .holder-history { font-size:0.7rem; color:var(--cream-dim); margin-top:0.25rem; font-style:italic; }
+  .tbl-btn { font-family:'DM Sans',sans-serif; font-size:0.66rem; letter-spacing:0.07em; text-transform:uppercase; padding:0.28rem 0.7rem; border-radius:2px; cursor:pointer; transition:all 0.2s; border:1px solid; margin-right:0.35rem; white-space:nowrap; }
+  .tbl-btn:last-child { margin-right:0; }
+  .btn-transfer { background:rgba(212,135,58,0.08); border-color:var(--border-strong); color:var(--amber-light); }
+  .btn-transfer:hover { background:rgba(212,135,58,0.18); }
+  .btn-edit-h { background:transparent; border-color:var(--border); color:var(--cream-dim); }
+  .btn-edit-h:hover { border-color:var(--border-strong); color:var(--cream); }
+  .btn-to-storage { background:rgba(90,138,94,0.08); border-color:rgba(90,138,94,0.3); color:#8dc991; }
+  .btn-to-storage:hover { background:rgba(90,138,94,0.18); }
+  /* FINANCE */
+  .fin-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:2rem; }
+  .paid-btn { font-family:'DM Sans',sans-serif; font-size:0.68rem; letter-spacing:0.07em; text-transform:uppercase; padding:0.3rem 0.75rem; border-radius:2px; cursor:pointer; background:rgba(212,135,58,0.08); border:1px solid var(--border-strong); color:var(--amber-light); transition:all 0.2s; }
+  .paid-btn:hover { background:rgba(212,135,58,0.18); }
+  .paid-badge { font-size:0.68rem; letter-spacing:0.07em; text-transform:uppercase; padding:0.22rem 0.65rem; border-radius:20px; background:rgba(90,138,94,0.12); color:#8dc991; }
+  footer { text-align:center; padding:2rem; font-size:0.72rem; color:rgba(184,169,142,0.32); border-top:1px solid var(--border); letter-spacing:0.05em; }
+  ::-webkit-scrollbar { width:5px; height:5px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--amber-dim); border-radius:3px; }
+  @media(max-width:600px){
+    nav { padding:1rem 1.2rem; }
+    .hero-content { padding:0 1.5rem 4rem; }
+    .hero-title { font-size:2.8rem; }
+    .section-wrap { padding:3rem 1.2rem; }
+    .form-row-2, .edit-fields { grid-template-columns:1fr; }
+    .req-card { grid-template-columns:1fr; }
+    .req-actions { justify-content:flex-start; margin-top:0.5rem; }
+    .modal-options { flex-direction:column; }
+    .admin-wrap { padding:2rem 1rem; }
+  }
+</style>
+</head>
+<body>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Haughville Hotties</div>
+  <div class="nav-links">
+    <a class="nav-btn" href="/" style="text-decoration:none">← obam.ai</a>
+    <button class="nav-btn active-nav" onclick="showPage('home')">Home</button>
+    <button class="nav-btn" onclick="showPage('request')">Request</button>
+    <button class="nav-btn" onclick="showPage('admin-login')">Admin</button>
+  </div>
+</nav>
+<!-- HOME -->
+<div id="page-home" class="page">
+  <div class="hero">
+    <div class="hero-placeholder"></div>
+    <!-- Replace with: <img class="hero-img" src="your-photo.jpg" alt="Haughville"> -->
+    <div class="hero-grain"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Haughville Community — Indianapolis</p>
+      <h1 class="hero-title">Tables &amp; <em>Chairs</em></h1>
+      <p class="hero-sub">Shared resources for the people who built them together. Borrow, transfer, return.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="showPage('request')">Request Items</button>
+        <button class="btn-outline" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">View Dashboard</button>
+      </div>
+    </div>
+  </div>
+  <div id="dashboard" class="section-wrap">
+    <p class="section-eyebrow">01 / Live Inventory</p>
+    <h2 class="section-title">What's Out Right Now</h2>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Chairs Available</div><div class="stat-num" id="chairs-avail">30</div><div class="stat-sub">of 30 total</div></div>
+      <div class="stat-card"><div class="stat-label">Tables Available</div><div class="stat-num" id="tables-avail">5</div><div class="stat-sub">of 5 total</div></div>
+      <div class="stat-card"><div class="stat-label">Active Holders</div><div class="stat-num" id="active-holders">0</div><div class="stat-sub">current borrowers</div></div>
+      <div class="stat-card"><div class="stat-label">Pending Requests</div><div class="stat-num" id="pending-count">0</div><div class="stat-sub">awaiting admin</div></div>
+    </div>
+    <p class="section-eyebrow" style="margin-bottom:1.2rem">Current Holders</p>
+    <div class="holders-grid" id="holders-grid">
+      <div class="empty-state">No items currently checked out — all chairs and tables are available.</div>
+    </div>
+  </div>
+  <footer>© 2025 Haughville Hotties &nbsp;·&nbsp; Indianapolis, IN</footer>
+</div>
+<!-- REQUEST PAGE -->
+<div id="page-request" class="page">
+  <div class="page-inner">
+    <div class="page-header">
+      <p class="section-eyebrow" style="margin-bottom:0.5rem">01 / Community Resources</p>
+      <h2 class="section-title" style="margin-bottom:0.5rem">Request Tables &amp; Chairs</h2>
+      <p style="color:var(--cream-dim);font-size:0.86rem;line-height:1.6">Submit your request below. An admin will review and confirm availability.</p>
+    </div>
+    <div class="form-card">
+      <div class="form-row">
+        <label class="form-label" for="req-name">Your Name</label>
+        <input class="form-input" id="req-name" type="text" placeholder="Full name">
+      </div>
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0">
+          <label class="form-label" for="req-chairs">Chairs Needed</label>
+          <input class="form-input" id="req-chairs" type="number" min="0" max="30" placeholder="0">
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label class="form-label" for="req-tables">Tables Needed</label>
+          <input class="form-input" id="req-tables" type="number" min="0" max="5" placeholder="0">
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:1.4rem">
+        <label class="form-label" for="req-date">Date Needed</label>
+        <input class="form-input" id="req-date" type="date">
+      </div>
+      <div class="form-note">💡 Community members use items for free. Outside guests are subject to a <strong>$50 flat fee</strong>. Admin confirms your status on review.</div>
+      <button class="submit-btn" onclick="submitRequest()">Submit Request</button>
+      <div class="success-banner" id="req-success">✓ Request submitted! An admin will review and be in touch.</div>
+    </div>
+  </div>
+  <footer>© 2025 Haughville Hotties &nbsp;·&nbsp; Indianapolis, IN</footer>
+</div>
+<!-- ADMIN LOGIN -->
+<div id="page-admin-login" class="page">
+  <div class="login-card">
+    <div class="lock-icon">🔐</div>
+    <h2 class="login-title">Admin Access</h2>
+    <p class="login-sub">Haughville Hotties — Staff Portal</p>
+    <div class="form-row">
+      <label class="form-label">Password</label>
+      <input class="form-input" id="admin-pw" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter') adminLogin()">
+    </div>
+    <button class="submit-btn" onclick="adminLogin()">Enter Portal</button>
+    <p class="login-error" id="login-error">Incorrect password. Try again.</p>
+  </div>
+</div>
+<!-- ADMIN PORTAL -->
+<div id="page-admin" class="page">
+  <div class="admin-wrap">
+    <!-- Admin Home -->
+    <div class="sub-page" id="admin-home">
+      <div class="admin-header">
+        <div>
+          <p class="admin-greeting">Staff Portal</p>
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700">Admin Dashboard</h2>
+        </div>
+        <div style="display:flex;gap:0.6rem;align-items:center">
+          <span class="admin-badge">Admin</span>
+          <button class="nav-btn" onclick="logout()">Log Out</button>
+        </div>
+      </div>
+      <div class="admin-nav-grid">
+        <div class="admin-nav-card" onclick="showAdminSection('requests')">
+          <div class="anc-icon">📋</div>
+          <div class="anc-title">Request Manager</div>
+          <div class="anc-desc">Review incoming requests, accept or decline, classify community vs guest.</div>
+          <div class="anc-count" id="admin-pending-badge">0 pending</div>
+        </div>
+        <div class="admin-nav-card" onclick="showAdminSection('inventory')">
+          <div class="anc-icon">📦</div>
+          <div class="anc-title">Inventory Tracker</div>
+          <div class="anc-desc">View current holders, edit details, transfer items to a new holder, or return to storage.</div>
+          <div class="anc-count" id="admin-inv-badge">30 chairs · 5 tables</div>
+        </div>
+        <div class="admin-nav-card" onclick="showAdminSection('finance')">
+          <div class="anc-icon">💰</div>
+          <div class="anc-title">Financial Tracker</div>
+          <div class="anc-desc">Track $50 guest fees, mark payments collected, view totals.</div>
+          <div class="anc-count" id="admin-fin-badge">$0 collected</div>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-label">Chairs Available</div><div class="stat-num" id="admin-chairs-avail">30</div><div class="stat-sub">of 30</div></div>
+        <div class="stat-card"><div class="stat-label">Tables Available</div><div class="stat-num" id="admin-tables-avail">5</div><div class="stat-sub">of 5</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Requests</div><div class="stat-num" id="admin-stat-pending">0</div></div>
+        <div class="stat-card"><div class="stat-label">Revenue Collected</div><div class="stat-num" id="admin-stat-revenue" style="font-size:2rem">$0</div></div>
+      </div>
+    </div>
+    <!-- Request Manager -->
+    <div class="sub-page" id="admin-requests">
+      <div class="sub-header">
+        <button class="back-btn" onclick="showAdminSection('home')">← Back</button>
+        <div>
+          <p class="section-eyebrow" style="margin-bottom:0.2rem">Admin Portal</p>
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700">Request Manager</h2>
+        </div>
+      </div>
+      <div class="requests-list" id="requests-list"><div class="empty-state">No requests yet.</div></div>
+    </div>
+    <!-- Inventory Tracker -->
+    <div class="sub-page" id="admin-inventory">
+      <div class="sub-header">
+        <button class="back-btn" onclick="showAdminSection('home')">← Back</button>
+        <div>
+          <p class="section-eyebrow" style="margin-bottom:0.2rem">Admin Portal</p>
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700">Inventory Tracker</h2>
+        </div>
+      </div>
+      <div class="stat-grid" style="margin-bottom:1.5rem">
+        <div class="stat-card"><div class="stat-label">Chairs Out</div><div class="stat-num" id="chairs-out-stat">0</div><div class="stat-sub" id="chairs-avail-stat">30 available</div></div>
+        <div class="stat-card"><div class="stat-label">Tables Out</div><div class="stat-num" id="tables-out-stat">0</div><div class="stat-sub" id="tables-avail-stat">5 available</div></div>
+      </div>
+      <div class="table-wrap">
+        <table class="inv-table">
+          <thead><tr><th>Current Holder</th><th>Chairs</th><th>Tables</th><th>Date</th><th>Type</th><th>Actions</th></tr></thead>
+          <tbody id="inv-tbody"><tr><td colspan="6" style="text-align:center;color:var(--cream-dim);font-style:italic;padding:2rem">No items currently checked out</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Financial Tracker -->
+    <div class="sub-page" id="admin-finance">
+      <div class="sub-header">
+        <button class="back-btn" onclick="showAdminSection('home')">← Back</button>
+        <div>
+          <p class="section-eyebrow" style="margin-bottom:0.2rem">Admin Portal</p>
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700">Financial Tracker</h2>
+        </div>
+      </div>
+      <div class="fin-stats">
+        <div class="stat-card"><div class="stat-label">Total Collected</div><div class="stat-num" id="fin-total">$0</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Payment</div><div class="stat-num" id="fin-pending" style="color:var(--amber-light)">$0</div></div>
+        <div class="stat-card"><div class="stat-label">Guest Bookings</div><div class="stat-num" id="fin-bookings">0</div></div>
+      </div>
+      <div class="table-wrap">
+        <table class="fin-table">
+          <thead><tr><th>Name</th><th>Date</th><th>Chairs</th><th>Tables</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody id="fin-tbody"><tr><td colspan="6" style="text-align:center;color:var(--cream-dim);font-style:italic;padding:2rem">No guest bookings yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <footer>© 2025 Haughville Hotties &nbsp;·&nbsp; Admin Portal</footer>
+</div>
+<!-- ACCEPT / TYPE MODAL -->
+<div class="modal-overlay" id="type-modal">
+  <div class="modal">
+    <h3 class="modal-title">Confirm Request</h3>
+    <p class="modal-sub" id="modal-req-detail"></p>
+    <p style="font-size:0.78rem;color:var(--cream-dim);margin-bottom:0.8rem">Is this person a community member?</p>
+    <div class="modal-options">
+      <div class="modal-opt" id="opt-member" onclick="selectType('community')"><div class="modal-opt-icon">🏘️</div><div style="font-weight:500">Community</div><div style="font-size:0.72rem;color:var(--cream-dim);margin-top:0.2rem">Free</div></div>
+      <div class="modal-opt" id="opt-guest"  onclick="selectType('guest')"><div class="modal-opt-icon">🌐</div><div style="font-weight:500">Outside Guest</div><div style="font-size:0.72rem;color:var(--cream-dim);margin-top:0.2rem">$50 flat fee</div></div>
+    </div>
+    <div class="warn-box" id="conflict-warn"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeTypeModal()">Cancel</button>
+      <button class="modal-confirm" onclick="confirmAccept()">Accept Request</button>
+    </div>
+  </div>
+</div>
+<!-- TRANSFER MODAL -->
+<div class="modal-overlay" id="transfer-modal">
+  <div class="modal">
+    <h3 class="modal-title">Transfer Holding</h3>
+    <p class="modal-sub" id="transfer-detail"></p>
+    <div class="modal-info">Items stay checked out — the holder is updated to the new person. A transfer history is recorded automatically.</div>
+    <span class="modal-label">Transfer To</span>
+    <input class="modal-input" id="transfer-name" type="text" placeholder="New holder's name">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeTransferModal()">Cancel</button>
+      <button class="modal-confirm" onclick="confirmTransfer()">Confirm Transfer</button>
+    </div>
+  </div>
+</div>
+<!-- EDIT HOLDER MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3 class="modal-title">Edit Holder</h3>
+    <p class="modal-sub" id="edit-detail"></p>
+    <div class="edit-fields">
+      <div class="edit-field"><label>Holder Name</label><input type="text" id="edit-name" placeholder="Name"></div>
+      <div class="edit-field"><label>Date</label><input type="date" id="edit-date"></div>
+      <div class="edit-field"><label>Chairs</label><input type="number" id="edit-chairs" min="0" max="30" placeholder="0"></div>
+      <div class="edit-field"><label>Tables</label><input type="number" id="edit-tables" min="0" max="5" placeholder="0"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeEditModal()">Cancel</button>
+      <button class="modal-confirm" onclick="confirmEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+<!-- RETURN TO STORAGE MODAL -->
+<div class="modal-overlay" id="storage-modal">
+  <div class="modal">
+    <h3 class="modal-title">Return to Storage</h3>
+    <p class="modal-sub" id="storage-detail"></p>
+    <div class="modal-info">This marks the items as back in storage and frees them in the inventory count.</div>
+    <span class="modal-label">Received By</span>
+    <input class="modal-input" id="storage-receiver" type="text" placeholder="Who received the items back">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeStorageModal()">Cancel</button>
+      <button class="modal-confirm" onclick="confirmReturnStorage()">Confirm Return</button>
+    </div>
+  </div>
+</div>
+<script>
+  const TOTAL_CHAIRS = 30, TOTAL_TABLES = 5, ADMIN_PW = 'Hchairs';
+  let state = { requests:[], inventory:[], pendingAcceptId:null };
+  let transferringId=null, editingId=null, storingId=null, selectedType=null;
+  // PERSISTENCE
+  function saveState(){try{localStorage.setItem('hh_requests',JSON.stringify(state.requests));localStorage.setItem('hh_inventory',JSON.stringify(state.inventory));}catch(e){}}
+  function loadState(){try{const r=localStorage.getItem('hh_requests'),i=localStorage.getItem('hh_inventory');if(r)state.requests=JSON.parse(r);if(i)state.inventory=JSON.parse(i);}catch(e){}}
+  // ROUTING
+  const ALL_PAGES=['page-home','page-request','page-admin-login','page-admin'];
+  const ALL_SUBS=['admin-home','admin-requests','admin-inventory','admin-finance'];
+  function showPage(page){
+    ALL_PAGES.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active-nav'));
+    const pm={home:'page-home',request:'page-request','admin-login':'page-admin-login',admin:'page-admin'};
+    const ni={home:0,request:1,'admin-login':2,admin:2};
+    const t=document.getElementById(pm[page]);if(t)t.style.display='block';
+    const nb=document.querySelectorAll('.nav-btn');
+    // index 0 is the obam.ai back-link, so shift admin-style nav buttons by 1
+    const navShift=1;
+    if(nb[ni[page]+navShift])nb[ni[page]+navShift].classList.add('active-nav');
+    if(page==='admin-login'){const pw=document.getElementById('admin-pw');if(pw)pw.value='';const err=document.getElementById('login-error');if(err)err.style.display='none';}
+    if(page==='admin')showAdminSection('home');
+    if(page==='home')renderPublicDashboard();
+    window.scrollTo(0,0);
+  }
+  function showAdminSection(sec){
+    ALL_SUBS.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+    const m={home:'admin-home',requests:'admin-requests',inventory:'admin-inventory',finance:'admin-finance'};
+    const t=document.getElementById(m[sec]);if(t)t.style.display='block';
+    updateAdminBadges();
+    if(sec==='requests')renderRequests();
+    if(sec==='inventory')renderInventory();
+    if(sec==='finance')renderFinance();
+  }
+  // AUTH
+  function adminLogin(){const pw=document.getElementById('admin-pw').value;if(pw===ADMIN_PW){document.getElementById('login-error').style.display='none';showPage('admin');}else{document.getElementById('login-error').style.display='block';}}
+  function logout(){showPage('home');}
+  // SUBMIT REQUEST
+  function submitRequest(){
+    const name=document.getElementById('req-name').value.trim();
+    const chairs=parseInt(document.getElementById('req-chairs').value)||0;
+    const tables=parseInt(document.getElementById('req-tables').value)||0;
+    const date=document.getElementById('req-date').value;
+    if(!name||(!chairs&&!tables)||!date){alert('Please fill in all fields.');return;}
+    state.requests.push({id:Date.now(),name,chairs,tables,date,status:'pending',type:null,paymentPaid:false});
+    saveState();
+    ['req-name','req-chairs','req-tables','req-date'].forEach(id=>document.getElementById(id).value='');
+    const b=document.getElementById('req-success');b.style.display='block';setTimeout(()=>b.style.display='none',4000);
+    renderPublicDashboard();updateAdminBadges();
+  }
+  // ACCEPT / DECLINE
+  function openAcceptModal(id){
+    const req=state.requests.find(r=>r.id===id);if(!req)return;
+    state.pendingAcceptId=id;selectedType=null;
+    document.getElementById('opt-member').classList.remove('selected');
+    document.getElementById('opt-guest').classList.remove('selected');
+    document.getElementById('modal-req-detail').textContent=`${req.name} · ${req.chairs} chair(s) · ${req.tables} table(s) · ${fmt(req.date)}`;
+    const onDate=state.inventory.filter(i=>i.date===req.date&&!i.returnedAt);
+    const usedC=onDate.reduce((a,b)=>a+b.chairs,0),usedT=onDate.reduce((a,b)=>a+b.tables,0);
+    const warnEl=document.getElementById('conflict-warn'),warns=[];
+    if(req.chairs>TOTAL_CHAIRS-usedC)warns.push(`⚠️ Only ${TOTAL_CHAIRS-usedC} chair(s) available on this date.`);
+    if(req.tables>TOTAL_TABLES-usedT)warns.push(`⚠️ Only ${TOTAL_TABLES-usedT} table(s) available on this date.`);
+    warnEl.innerHTML=warns.join('<br>');warnEl.style.display=warns.length?'block':'none';
+    document.getElementById('type-modal').classList.add('open');
+  }
+  function selectType(t){selectedType=t;document.getElementById('opt-member').classList.toggle('selected',t==='community');document.getElementById('opt-guest').classList.toggle('selected',t==='guest');}
+  function closeTypeModal(){document.getElementById('type-modal').classList.remove('open');state.pendingAcceptId=null;selectedType=null;}
+  function confirmAccept(){
+    if(!selectedType){alert('Please select Community or Outside Guest.');return;}
+    const req=state.requests.find(r=>r.id===state.pendingAcceptId);if(!req)return;
+    req.status='accepted';req.type=selectedType;
+    state.inventory.push({id:req.id,name:req.name,chairs:req.chairs,tables:req.tables,date:req.date,type:selectedType,paymentPaid:false,returnedAt:null,receivedBy:null,history:[]});
+    saveState();closeTypeModal();renderRequests();renderInventory();renderFinance();renderPublicDashboard();updateAdminBadges();
+  }
+  function declineRequest(id){const req=state.requests.find(r=>r.id===id);if(req)req.status='declined';saveState();renderRequests();updateAdminBadges();}
+  // TRANSFER
+  function openTransferModal(id){
+    const item=state.inventory.find(i=>i.id===id);if(!item)return;
+    transferringId=id;
+    document.getElementById('transfer-detail').textContent=`Currently held by ${item.name} — ${item.chairs} chair(s), ${item.tables} table(s)`;
+    document.getElementById('transfer-name').value='';
+    document.getElementById('transfer-modal').classList.add('open');
+  }
+  function closeTransferModal(){document.getElementById('transfer-modal').classList.remove('open');transferringId=null;}
+  function confirmTransfer(){
+    const newName=document.getElementById('transfer-name').value.trim();
+    if(!newName){alert('Please enter the new holder\'s name.');return;}
+    const item=state.inventory.find(i=>i.id===transferringId);if(!item)return;
+    item.history.push({name:item.name,at:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+    item.name=newName;
+    saveState();closeTransferModal();renderInventory();renderPublicDashboard();updateAdminBadges();
+  }
+  // EDIT
+  function openEditModal(id){
+    const item=state.inventory.find(i=>i.id===id);if(!item)return;
+    editingId=id;
+    document.getElementById('edit-detail').textContent=`Editing: ${item.name}`;
+    document.getElementById('edit-name').value=item.name;
+    document.getElementById('edit-date').value=item.date;
+    document.getElementById('edit-chairs').value=item.chairs;
+    document.getElementById('edit-tables').value=item.tables;
+    document.getElementById('edit-modal').classList.add('open');
+  }
+  function closeEditModal(){document.getElementById('edit-modal').classList.remove('open');editingId=null;}
+  function confirmEdit(){
+    const item=state.inventory.find(i=>i.id===editingId);if(!item)return;
+    item.name=document.getElementById('edit-name').value.trim()||item.name;
+    item.date=document.getElementById('edit-date').value||item.date;
+    item.chairs=parseInt(document.getElementById('edit-chairs').value)||0;
+    item.tables=parseInt(document.getElementById('edit-tables').value)||0;
+    saveState();closeEditModal();renderInventory();renderPublicDashboard();updateAdminBadges();
+  }
+  // RETURN TO STORAGE
+  function openStorageModal(id){
+    const item=state.inventory.find(i=>i.id===id);if(!item)return;
+    storingId=id;
+    document.getElementById('storage-detail').textContent=`${item.name} — ${item.chairs} chair(s), ${item.tables} table(s)`;
+    document.getElementById('storage-receiver').value='';
+    document.getElementById('storage-modal').classList.add('open');
+  }
+  function closeStorageModal(){document.getElementById('storage-modal').classList.remove('open');storingId=null;}
+  function confirmReturnStorage(){
+    const receiver=document.getElementById('storage-receiver').value.trim();
+    if(!receiver){alert('Please enter who received the items back.');return;}
+    const item=state.inventory.find(i=>i.id===storingId);if(!item)return;
+    item.returnedAt=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    item.receivedBy=receiver;
+    saveState();closeStorageModal();renderInventory();renderPublicDashboard();updateAdminBadges();
+  }
+  // RENDER REQUESTS
+  function renderRequests(){
+    const el=document.getElementById('requests-list');
+    if(!state.requests.length){el.innerHTML='<div class="empty-state">No requests yet.</div>';return;}
+    const ord={pending:0,accepted:1,declined:2};
+    const sorted=[...state.requests].sort((a,b)=>ord[a.status]-ord[b.status]);
+    el.innerHTML=sorted.map(r=>`
+      <div class="req-card ${r.status}">
+        <div>
+          <div class="req-name">${r.name}</div>
+          <div class="req-meta">
+            <span>🪑 ${r.chairs} chair(s)</span>
+            <span>🪑 ${r.tables} table(s)</span>
+            <span>📅 ${fmt(r.date)}</span>
+            ${r.type?`<span class="req-type-tag">${r.type==='community'?'🏘️ Community':'🌐 Guest · $50'}</span>`:''}
+          </div>
+        </div>
+        <div class="req-actions">
+          <span class="req-status-badge badge-${r.status}">${r.status}</span>
+          ${r.status==='pending'?`<button class="action-btn btn-accept" onclick="openAcceptModal(${r.id})">Accept</button><button class="action-btn btn-decline" onclick="declineRequest(${r.id})">Decline</button>`:''}
+        </div>
+      </div>`).join('');
+  }
+  // RENDER INVENTORY
+  function renderInventory(){
+    const active=state.inventory.filter(i=>!i.returnedAt);
+    const co=active.reduce((a,b)=>a+b.chairs,0),to=active.reduce((a,b)=>a+b.tables,0);
+    document.getElementById('chairs-out-stat').textContent=co;
+    document.getElementById('tables-out-stat').textContent=to;
+    document.getElementById('chairs-avail-stat').textContent=`${TOTAL_CHAIRS-co} available`;
+    document.getElementById('tables-avail-stat').textContent=`${TOTAL_TABLES-to} available`;
+    const tbody=document.getElementById('inv-tbody');
+    if(!state.inventory.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--cream-dim);font-style:italic;padding:2rem">No items currently checked out</td></tr>';return;}
+    tbody.innerHTML=state.inventory.map(i=>{
+      const hist=i.history&&i.history.length?`<div class="holder-history">Previously: ${i.history.map(h=>`${h.name} → ${h.at}`).join(' · ')}</div>`:'';
+      const actions=i.returnedAt
+        ?`<span style="font-size:0.76rem;color:#8dc991">✓ Returned ${i.returnedAt}<br><span style="color:var(--cream-dim)">to ${i.receivedBy}</span></span>`
+        :`<button class="tbl-btn btn-transfer" onclick="openTransferModal(${i.id})">Transfer</button><button class="tbl-btn btn-edit-h" onclick="openEditModal(${i.id})">Edit</button><button class="tbl-btn btn-to-storage" onclick="openStorageModal(${i.id})">Return to Storage</button>`;
+      return`<tr style="${i.returnedAt?'opacity:0.45':''}">
+        <td><strong>${i.name}</strong>${hist}</td>
+        <td>${i.chairs}</td><td>${i.tables}</td>
+        <td>${fmt(i.date)}</td>
+        <td><span class="req-type-tag">${i.type==='community'?'🏘️ Community':'🌐 Guest'}</span></td>
+        <td>${actions}</td></tr>`;
+    }).join('');
+  }
+  // RENDER FINANCE
+  function renderFinance(){
+    const guests=state.inventory.filter(i=>i.type==='guest');
+    const col=guests.filter(i=>i.paymentPaid).length*50;
+    const pen=guests.filter(i=>!i.paymentPaid).length*50;
+    document.getElementById('fin-total').textContent=`$${col}`;
+    document.getElementById('fin-pending').textContent=`$${pen}`;
+    document.getElementById('fin-bookings').textContent=guests.length;
+    document.getElementById('admin-stat-revenue').textContent=`$${col}`;
+    const tbody=document.getElementById('fin-tbody');
+    if(!guests.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--cream-dim);font-style:italic;padding:2rem">No guest bookings yet</td></tr>';return;}
+    tbody.innerHTML=guests.map(i=>`<tr>
+      <td><strong>${i.name}</strong></td><td>${fmt(i.date)}</td>
+      <td>${i.chairs}</td><td>${i.tables}</td>
+      <td style="color:var(--amber);font-weight:500">$50</td>
+      <td>${i.paymentPaid?`<span class="paid-badge">✓ Paid</span>`:`<button class="paid-btn" onclick="markPaid(${i.id})">Mark Paid</button>`}</td>
+    </tr>`).join('');
+  }
+  function markPaid(id){const item=state.inventory.find(i=>i.id===id);if(item)item.paymentPaid=true;saveState();renderFinance();updateAdminBadges();}
+  // RENDER PUBLIC DASHBOARD
+  function renderPublicDashboard(){
+    const active=state.inventory.filter(i=>!i.returnedAt);
+    const co=active.reduce((a,b)=>a+b.chairs,0),to=active.reduce((a,b)=>a+b.tables,0);
+    const pend=state.requests.filter(r=>r.status==='pending').length;
+    document.getElementById('chairs-avail').textContent=TOTAL_CHAIRS-co;
+    document.getElementById('tables-avail').textContent=TOTAL_TABLES-to;
+    document.getElementById('active-holders').textContent=active.length;
+    document.getElementById('pending-count').textContent=pend;
+    const grid=document.getElementById('holders-grid');
+    if(!active.length){grid.innerHTML='<div class="empty-state">No items currently checked out — all chairs and tables are available.</div>';return;}
+    grid.innerHTML=active.map(i=>`<div class="holder-card">
+      <div class="holder-name">${i.name}</div>
+      <div class="holder-items">
+        ${i.chairs?`<span class="holder-tag">🪑 ${i.chairs} chair${i.chairs>1?'s':''}</span>`:''}
+        ${i.tables?`<span class="holder-tag">🪑 ${i.tables} table${i.tables>1?'s':''}</span>`:''}
+      </div>
+      <div class="holder-date">📅 ${fmt(i.date)}</div>
+    </div>`).join('');
+  }
+  // BADGES
+  function updateAdminBadges(){
+    const pend=state.requests.filter(r=>r.status==='pending').length;
+    const active=state.inventory.filter(i=>!i.returnedAt);
+    const co=active.reduce((a,b)=>a+b.chairs,0),to=active.reduce((a,b)=>a+b.tables,0);
+    const col=state.inventory.filter(i=>i.type==='guest'&&i.paymentPaid).length*50;
+    document.getElementById('admin-pending-badge').textContent=`${pend} pending`;
+    document.getElementById('admin-inv-badge').textContent=`${TOTAL_CHAIRS-co} chairs · ${TOTAL_TABLES-to} tables`;
+    document.getElementById('admin-fin-badge').textContent=`$${col} collected`;
+    document.getElementById('admin-stat-pending').textContent=pend;
+    document.getElementById('admin-chairs-avail').textContent=TOTAL_CHAIRS-co;
+    document.getElementById('admin-tables-avail').textContent=TOTAL_TABLES-to;
+  }
+  // HELPERS
+  function fmt(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]} ${+day}, ${y}`;}
+  // INIT
+  (function init(){
+    loadState();
+    if(!state.requests.length&&!state.inventory.length){
+      state.requests.push(
+        {id:1001,name:'Marcus Johnson',chairs:12,tables:2,date:'2025-07-20',status:'accepted',type:'community',paymentPaid:false},
+        {id:1002,name:'Priya Adesanya',chairs:8,tables:1,date:'2025-07-27',status:'pending',type:null,paymentPaid:false},
+        {id:1003,name:'Derek Walton',chairs:20,tables:3,date:'2025-08-03',status:'accepted',type:'guest',paymentPaid:false},
+        {id:1004,name:'Sandra Owusu',chairs:5,tables:0,date:'2025-07-20',status:'declined',type:null,paymentPaid:false}
+      );
+      state.inventory.push(
+        {id:1001,name:'Marcus Johnson',chairs:12,tables:2,date:'2025-07-20',type:'community',paymentPaid:false,returnedAt:null,receivedBy:null,history:[]},
+        {id:1003,name:'Derek Walton',chairs:20,tables:3,date:'2025-08-03',type:'guest',paymentPaid:false,returnedAt:null,receivedBy:null,history:[]}
+      );
+      saveState();
+    }
+    ALL_PAGES.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+    ALL_SUBS.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+    document.getElementById('page-home').style.display='block';
+    renderPublicDashboard();updateAdminBadges();
+  })();
+</script>
+</body>
+</html>

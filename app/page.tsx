@@ -267,12 +267,12 @@ export default function Home() {
             desc="An interactive D3 visualization of the Mabogunje family history — with highlight, re-root, and full spouse views."
             dark={dark}
           />
-          <div className={`p-6 rounded-2xl border border-dashed ${dark ? "border-white/10" : "border-black/10"}`}>
-            <h3 className={`font-[family-name:var(--font-cormorant)] text-xl font-semibold ${dark ? "text-white/30" : "text-black/30"}`}>
-              More coming soon
-            </h3>
-            <p className={`mt-2 text-sm ${dark ? "text-white/20" : "text-black/20"}`}>New projects on the way.</p>
-          </div>
+          <ProjectCard
+            href="/community-chair-tracker"
+            title="Community Chair Tracker"
+            desc="Haughville Hotties — a shared inventory tracker for community tables and chairs. Borrow, transfer, return."
+            dark={dark}
+          />
         </div>
       </section>
 
