@@ -273,6 +273,12 @@ export default function Home() {
             desc="Haughville Hotties — a shared inventory tracker for community tables and chairs. Borrow, transfer, return."
             dark={dark}
           />
+          <ProjectCard
+            href="/voxdrop"
+            title="VoxDrop"
+            desc="An AI video transcription tool — paste a link or upload a file, get timestamped segments, plain text, or SRT subtitles."
+            dark={dark}
+          />
         </div>
       </section>
 
